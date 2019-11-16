@@ -7,6 +7,11 @@ autoload -Uz _zplugin                   # Load plugin
 zpcompinit                              # Load completions
 # End of install block ##################
 
+export NVM_AUTO_USE=true
+export NVM_LAZY_LOAD=true
+export EDITOR="code --wait"
+alias ls="exa"
+
 # Helper functions
 turbo()     { zplugin ice wait"0" lucid     "${@}"; } # Load next plugin async
 zload()     { zplugin load                  "${@}"; } # Load plugin
@@ -37,7 +42,17 @@ zload romkatv/powerlevel10k
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-export NVM_AUTO_USE=true
-export NVM_LAZY_LOAD=true
-export EDITOR="code --wait"
-alias ls="exa"
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/davidgarber/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/davidgarber/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/davidgarber/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/davidgarber/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
