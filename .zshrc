@@ -1,16 +1,39 @@
-# Install and initialize zplugin ########
-if [ ! -d "$HOME/.zplugin" ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block, everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-source $HOME/.zplugin/bin/zplugin.zsh   # Source plugin
-autoload -Uz _zplugin                   # Load plugin
-zpcompinit                              # Load completions
-# End of install block ##################
+
+
+### Added by Zinit's installer
+if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
+    print -P "%F{33}▓▒░ %F{220}Installing DHARMA Initiative Plugin Manager (zdharma/zinit)…%f"
+    command mkdir -p "$HOME/.zinit" && command chmod g-rwX "$HOME/.zinit"
+    command git clone https://github.com/zdharma/zinit "$HOME/.zinit/bin" && \
+        print -P "%F{33}▓▒░ %F{34}Installation successful.%f" || \
+        print -P "%F{160}▓▒░ The clone has failed.%f"
+fi
+source "$HOME/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+### End of Zinit installer's chunk
 
 export NVM_AUTO_USE=true
 export NVM_LAZY_LOAD=true
 export EDITOR="code --wait"
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home"
+export PATH=$PATH:$JAVA_HOME/bin
+# export PYSPARK_DRIVER_PYTHON=jupyter
+# export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
+
+
 alias ls="exa"
+alias ws="cd ~/workspace"
+alias gpoh="git push origin HEAD"
+alias zshcfg="code ~/.zshrc"
+alias grbi="git rebase -i"
+alias gpurge="gco dev && git up && git for-each-ref --format '%(refname:short)' refs/heads | grep -v master | xargs git branch -D"
 
 # Helper functions
 turbo()     { zplugin ice wait"0" lucid     "${@}"; } # Load next plugin async
@@ -42,16 +65,18 @@ zload romkatv/powerlevel10k
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/davidgarber/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$("/Users/${USERNAME}/anaconda3/bin/conda" 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/Users/davidgarber/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/davidgarber/anaconda3/etc/profile.d/conda.sh"
+    if [ -f "/Users/${USERNAME}/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/${USERNAME}/anaconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/Users/davidgarber/anaconda3/bin:$PATH"
+        export PATH="/Users/${USERNAME}/anaconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
